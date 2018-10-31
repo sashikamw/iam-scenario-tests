@@ -30,7 +30,6 @@
 
     <modules>
         <module>tests-backend</module>
-        <!--<module>tests</module>-->
     </modules>
 
     <dependencies>
