@@ -42,7 +42,6 @@ public class ProvisionUserSCIM2 {
     private String userId;
 
     String resourceLocation = System.getProperty("framework.resource.location");
-    String SERVER_URL = "https://" + getBackEndEP() + ":9443";
 
     private CloseableHttpClient client;
 
@@ -55,7 +54,7 @@ public class ProvisionUserSCIM2 {
 
     @Test
     public void testCreateUser() throws Exception {
-        String scimEndpoint = SERVER_URL + SCIM2_USERS_ENDPOINT;
+        String scimEndpoint = getIdentityHTTPSEP() + SCIM2_USERS_ENDPOINT;
         HttpPost request = new HttpPost(scimEndpoint);
         request.addHeader(HttpHeaders.AUTHORIZATION, getAuthzHeader());
         request.addHeader(HttpHeaders.CONTENT_TYPE, "application/json");
@@ -92,7 +91,7 @@ public class ProvisionUserSCIM2 {
 
     @Test(dependsOnMethods = "testCreateUser")
     public void testDeleteUser() throws Exception {
-        String userResourcePath = SERVER_URL + SCIM2_USERS_ENDPOINT + "/" + userId;
+        String userResourcePath = getIdentityHTTPSEP() + SCIM2_USERS_ENDPOINT + "/" + userId;
         HttpDelete request = new HttpDelete(userResourcePath);
         request.addHeader(HttpHeaders.AUTHORIZATION, getAuthzHeader());
         request.addHeader(HttpHeaders.CONTENT_TYPE, "application/json");
@@ -103,7 +102,7 @@ public class ProvisionUserSCIM2 {
 
         EntityUtils.consume(response.getEntity());
 
-        userResourcePath = SERVER_URL + SCIM2_USERS_ENDPOINT + "/" + userId;
+        userResourcePath = getIdentityHTTPSEP() + SCIM2_USERS_ENDPOINT + "/" + userId;
         HttpGet getRequest = new HttpGet(userResourcePath);
         getRequest.addHeader(HttpHeaders.AUTHORIZATION, getAuthzHeader());
         getRequest.addHeader(HttpHeaders.CONTENT_TYPE, "application/json");
@@ -120,7 +119,6 @@ public class ProvisionUserSCIM2 {
         return "Basic " + Base64.encodeBase64String((adminUsername + ":" + adminPassword).getBytes()).trim();
     }
 
-
     private void setKeyStoreProperties() {
         System.setProperty("javax.net.ssl.trustStore", resourceLocation + "keystores/products/wso2carbon.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "wso2carbon");
@@ -128,7 +126,7 @@ public class ProvisionUserSCIM2 {
 
     }
 
-    private String getBackEndEP() {
+    private String getIdentityHTTPSEP() {
         String bucketLocation = System.getenv("DATA_BUCKET_LOCATION");
         String url = null;
         log.info("Data Bucket location is set : " + bucketLocation);
@@ -137,18 +135,15 @@ public class ProvisionUserSCIM2 {
         //InputStream input = null;
         try (InputStream input = new FileInputStream(bucketLocation + "/infrastructure.properties")) {
             prop.load(input);
-            url = prop.getProperty("WSO2PublicIP");
+            url = prop.getProperty("ISHttpsUrl");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
 
-        if (url != null && url.contains("/")) {
-            url = url.split("/")[2];
-        } else if (url == null){
-            url = "localhost";
+        if (url == null){
+            url = "https://localhost:9443";
         }
-        //Construct the proper URL if required
-        log.info("Backend URL is set as : " + bucketLocation);
+
         return url;
     }
 
