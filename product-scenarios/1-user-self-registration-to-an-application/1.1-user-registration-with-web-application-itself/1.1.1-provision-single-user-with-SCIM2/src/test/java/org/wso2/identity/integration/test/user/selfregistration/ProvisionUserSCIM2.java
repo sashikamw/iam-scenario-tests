@@ -53,7 +53,7 @@ public class ProvisionUserSCIM2 {
 
 
     @Test
-    public void testCreateUser() throws Exception {
+    public void _1_1_1_1_TestCreateUser() throws Exception {
         String scimEndpoint = getIdentityHTTPSEP() + SCIM2_USERS_ENDPOINT;
         HttpPost request = new HttpPost(scimEndpoint);
         request.addHeader(HttpHeaders.AUTHORIZATION, getAuthzHeader());
@@ -87,10 +87,11 @@ public class ProvisionUserSCIM2 {
 
         userId = ((JSONObject) responseObj).get(ID_ATTRIBUTE).toString();
         assertNotNull(userId);
+
+        testDeleteUser();
     }
 
-    @Test(dependsOnMethods = "testCreateUser")
-    public void testDeleteUser() throws Exception {
+     private void testDeleteUser() throws Exception {
         String userResourcePath = getIdentityHTTPSEP() + SCIM2_USERS_ENDPOINT + "/" + userId;
         HttpDelete request = new HttpDelete(userResourcePath);
         request.addHeader(HttpHeaders.AUTHORIZATION, getAuthzHeader());

@@ -33,7 +33,7 @@
     <url>http://wso2.org/projects/identity</url>
 
     <modules>
-        <module>modules/integration</module>
+        <module>product-scenarios/1-user-self-registration-to-an-application</module>
     </modules>
 
     <licenses>

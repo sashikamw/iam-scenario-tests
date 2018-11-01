@@ -28,7 +28,7 @@
     <name>Identity Server Integration Tests</name>
     <packaging>pom</packaging>
     <modules>
-        <module>tests-integration</module>
+        <module>1.1-user-registration-with-web-application-itself</module>
     </modules>
     <build>
         <plugins>
